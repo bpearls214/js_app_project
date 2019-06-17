@@ -39,11 +39,9 @@ var repository = [
 printArrayDetails(repository);
 printArrayDetails(repository2);
 */
-function printArrayDetails(pokemonList) {
-  pokemonList.forEach(function(property){
-    document.write(property.name + ': ' + property.height + ' feet </br>')
-  })
-}
+function pokemonList (property) {
+  document.write(property.name + ': ' + property.height + ' feet </br>')
+  }
 
-printArrayDetails(repository);
-printArrayDetails(repository2);
+repository.forEach(pokemonList);
+repository2.forEach(pokemonList);
