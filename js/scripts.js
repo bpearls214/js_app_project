@@ -1,20 +1,18 @@
-var repository = [
-  // pokemon objects
-    {name: 'Vulpix',
-    height: 3,
-    type: ['flamethrower',' speed']},
-
-    {name: 'Pikachu',
-    height: 2,
-    type: ['lightning',' humor']},
-
-    {name: 'Squidward',
-    height: 4,
-    type: ['water',' strength']},
-  ];
-
-  var repository2 = [
+var pokemonRepository = (function () {
+  var repository = [
     // pokemon objects
+      {name: 'Vulpix',
+      height: 3,
+      type: ['flamethrower',' speed']},
+
+      {name: 'Pikachu',
+      height: 2,
+      type: ['lightning',' humor']},
+
+      {name: 'Squidward',
+      height: 4,
+      type: ['water',' strength']},
+
       {name: 'Bigfoot',
       height: 11,
       type: ['smell',' strength']},
@@ -24,24 +22,45 @@ var repository = [
       type: ['water',' stealth']},
     ];
 
-  /* ---old 'for' function, excluded to include for each instead 6/14/19 --
- function printArrayDetails(pokemonList) {
-  for (var i = 0; i < pokemonList.length; i++) {
-    document.write('<br/>', pokemonList[i].name);
-    document.write(" (" + pokemonList[i].height + ' feet, Type: ' + pokemonList[i].type + ')');
-    if (pokemonList[i].height === 4) {
-      document.write('....yikes, that\'s big!')
+  function add(pokemon) {
+    if (typeof(pokemon) ==='object'){
+      repository.push(pokemon);
+    } else {
+      console.log('Please add an object');
     }
   }
-}
 
-// Calling printArrayDetails function twice
-printArrayDetails(repository);
-printArrayDetails(repository2);
-*/
-function pokemonList (property) {
-  document.write(property.name + ': ' + property.height + ' feet </br>')
+  function getAll() {
+    return repository;
   }
 
-repository.forEach(pokemonList);
-repository2.forEach(pokemonList);
+  return {
+    add: add,
+    getAll: getAll,
+  };
+})();
+
+var allPokemon = pokemonRepository.getAll();
+
+function getHeightDescription(property) {
+  return property.height + ' Feet. ';
+  }
+
+function getTypeDescription(property) {
+  return ' [Type: ' + property.type + ']';
+}
+
+function getName(property) {
+  return property.name + ': ';
+}
+
+function displayPokemonStats(property) {
+  return getName(property) + getHeightDescription(property) + getTypeDescription(property);
+}
+
+allPokemon.forEach(function(pokemon) {
+  document.write(displayPokemonStats(pokemon) + '<br>');
+});
+
+const mediumPokemon = allPokemon.filter(allPokemon.height === 4);
+console.log(result); //expected output Loch Nessie and Squidward
