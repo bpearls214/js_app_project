@@ -34,14 +34,9 @@ var pokemonRepository = (function () {
     return repository;
   }
 
-  function filter() {
-    return repository.name;
-    }
-
   return {
     add: add,
     getAll: getAll,
-    filter: filter
   }
 
 })();
@@ -68,6 +63,6 @@ allPokemon.forEach(function(pokemon) {
   document.write(displayPokemonStats(pokemon) + '<br>');
 });
 
-const perfectSize = pokemonRepository.filter(e => e.height === 4);
+const perfectSize = allPokemon.filter(e => e.height === 4);
 
 console.log(perfectSize); //expected output Loch Nessie and Squidward
