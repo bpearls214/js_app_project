@@ -1,38 +1,6 @@
 var pokemonRepository = (function () {
-  var repository = [
-    // pokemon object [name, type, height]
-      {name: 'Vulpix',
-      height: 3,
-      type: ['flamethrower',' speed']},
-
-      {name: 'Pikachu',
-      height: 2,
-      type: ['lightning',' humor']},
-
-      {name: 'Squidward',
-      height: 4,
-      type: ['water',' strength']},
-
-      {name: 'Bigfoot',
-      height: 11,
-      type: ['smell',' strength']},
-
-      {name: 'Loch Nessie',
-      height: 4,
-      type: ['water',' stealth']},
-    ];
-
-  function add(pokemon) {
-    if (typeof(pokemon) ==='object'){
-      repository.push(pokemon);
-    } else {
-      console.log('Please add an object');
-    }
-  }
-
-  function getAll() {
-    return repository;
-  }
+  var repository = [];
+  var apiUrl = 'https://pokeapi.co/api/v2/pokemon/?limit=150';
 
   function addListItem(pokemonObject) {
 		var $newListItem = document.createElement('li');
@@ -45,54 +13,79 @@ var pokemonRepository = (function () {
 		$pokeList.appendChild($newListItem);
 		$newButton.innerText = pokemonObject.name;
 		$newButton.addEventListener('click', function(event) {
-			showDetails(event.target.innerText);
+			showDetails(pokemonObject);
 	   });
    }
 
-   function showDetails(pokemonName) {
-     console.log(pokemonName);
+  function showDetails(item) {
+     pokemonRepository.loadDetails(item).then(function () {
+       console.log(item);
+     });
+    }
+
+  function add(pokemon){
+       repository.push(pokemon);
+    }
+
+  function getAll() {
+     return repository;
    }
+
+  function loadList() {
+   return fetch(apiUrl).then(function (response) {
+     return response.json();
+   }).then(function (json) {
+     json.results.forEach(function (item) {
+       var pokemon = {
+         name: item.name,
+         detailsUrl: item.url
+       };
+       add(pokemon);
+     });
+   }).catch(function (e) {
+     console.error(e);
+   })
+ }
+
+ function loadDetails(item) {
+  var url = item.detailsUrl;
+  return fetch(url).then(function (response) {
+    return response.json();
+  }).then(function (details) {
+    item.imageUrl = details.sprites.front_default;
+    item.height = details.height;
+    item.types = Object.keys(details.types);
+  }).catch(function (e) {
+    console.error(e);
+  });
+}
 
   return {
     add: add,
     getAll: getAll,
     addListItem: addListItem,
-    showDetails: showDetails
-  }
+    loadList: loadList,
+    loadDetails: loadDetails
+  };
 
 })();
 
-var allPokemon = pokemonRepository.getAll();
-
-function getHeightDescription(property) {
-  return property.height + ' Feet. ';
-  }
-
-function getTypeDescription(property) {
-  return ' [Type: ' + property.type + ']';
-}
-
-function getName(property) {
-  return property.name + ': ';
-}
-
-function displayPokemonStats(property) {
-  return getName(property) + getHeightDescription(property) + getTypeDescription(property);
-}
-
-allPokemon.forEach(function (pokemon) {
- pokemonRepository.addListItem(pokemon);
+pokemonRepository.loadList().then(function() {
+  pokemonRepository.getAll().forEach(function(pokemon){
+    pokemonRepository.addListItem(pokemon);
+  });
 });
 
-const perfectSize = allPokemon.filter(e => e.height === 4);
+// class list toggle
+var $button = document.querySelector(".pokemon-list");
 
-console.log(perfectSize); //expected output Loch Nessie and Squidward
-
-// added class list toggle out of curiosity
-var $button = document.querySelector('.pokemon-list');
-
-$button.addEventListener('click', function (event) {
+$button.addEventListener("click", function(event) {
   var $target = event.target;
-  $target.classList.toggle('list-item__buttonClicked');
-  $target.classList.toggle('.list-item__button');
+  var toggleBtn = $target;
+
+  if ($target.classList[0] === "pokemon-list__item") {
+    toggleBtn = event.target.children[0];
+  }
+
+  toggleBtn.classList.toggle("list-item__buttonClicked");
 });
